@@ -9,14 +9,20 @@ export interface Route {
 
 export interface PathToken {
     path: string;
-    prefix: string;
+    prefix: string | null;
     name?: string | number ;
-    delimiter: string;
+    delimiter: string | null;
     optional: boolean;
     repeat: boolean;
     partial: boolean;
     asterisk?: string;
-    pattern?:null;
+    pattern?:string | null;
 
 }
+export interface Options {
+    sensitive?: boolean;
+    strict?: boolean;
+    end?: boolean;
+}
+export type PathInput = string | RegExp | (string | RegExp)[];
 
