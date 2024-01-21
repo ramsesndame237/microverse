@@ -10,12 +10,13 @@ export interface Route {
 export interface PathToken {
     path: string;
     prefix: string;
-    name: string | undefined;
+    name?: string | number ;
     delimiter: string;
     optional: boolean;
     repeat: boolean;
     partial: boolean;
-    asterisk: string | undefined;
+    asterisk?: string;
+    pattern?:null;
 
 }
 
