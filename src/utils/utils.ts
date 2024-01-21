@@ -2,7 +2,7 @@
 
 import type {PathToken} from "../interfaces/types.ts";
 
-class PathParser {
+export class PathParser {
 
     /**
      * @param {string}str in parse function
@@ -83,7 +83,7 @@ class ParameterSegment implements PathSegment {
     }
 }
 
-class PathGenerator {
+export class PathGenerator {
     private readonly segments: PathSegment[];
 
     constructor(tokens: Partial<PathToken>[]) {

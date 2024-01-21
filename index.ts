@@ -1,3 +1,6 @@
+import {PathGenerator, PathParser} from "./src/utils/utils.ts";
+import type {PathToken} from "./src/interfaces/types.ts";
+
 declare var define:any
 ((global: any, factory: () => any) => {
     if (typeof exports === 'object' && typeof module !== 'undefined') {
@@ -26,5 +29,64 @@ declare var define:any
         // "/*"            => ["/", undefined, undefined, undefined, undefined, "*"]
         '([\\/.])?(?:(?:\\:(\\w+)(?:\\(((?:\\\\.|[^()])+)\\))?|\\(((?:\\\\.|[^()])+)\\))([+*?])?|(\\*))'
     ].join('|'), 'g');
+
+    const compile =(str:string) => {
+        const parser = new PathParser()
+        return new PathGenerator(parser.parse(str))
+    }
+    /**
+     * Escape special characters in a regular expression string.
+     *
+     * @param {string} str - The input string.
+     * @returns {string} - The escaped string.
+     */
+    const escapeString =(str: string): string  =>{
+        return str.replace(/([.+*?=^!:${}()[\]|\/])/g, '\\$1');
+    }
+
+    /**
+     * Escape special characters in a capturing group.
+     *
+     * @param {string} group - The input capturing group string.
+     * @returns {string} - The escaped capturing group string.
+     */
+    const escapeGroup =(group: string): string=> {
+        return group.replace(/([=!:$\/()])/g, '\\$1');
+    }
+
+    /**
+     * Attach keys as a property of the regular expression.
+     *
+     * @param {RegExp} re - The regular expression.
+     * @param {string[]} keys - The keys to attach.
+     * @returns {RegExp} - The modified regular expression with attached keys.
+     */
+    const attachKeys =(re: any, keys: Partial<PathToken>[]): RegExp =>{
+        re.keys = keys;
+        return re;
+    }
+
+
+    const  regexpToRegexp =(path: RegExp, keys: Partial<PathToken>[]): RegExp => {
+        // Use a negative lookahead to match only capturing groups.
+        const groups = path.source.match(/\((?!\?)/g);
+
+        if (groups) {
+            for (let i = 0; i < groups.length; i++) {
+                keys.push({
+                    name: i,
+                    prefix: undefined,
+                    delimiter: undefined,
+                    optional: false,
+                    repeat: false,
+                    pattern: null
+                });
+            }
+        }
+
+        return attachKeys(path, keys);
+    }
+
+
     return ;
 });
